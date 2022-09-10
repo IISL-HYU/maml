@@ -47,7 +47,7 @@ def train_step(x, y, model, optimizer):
 
 def regular_train(model, train_ds, epochs=1, lr=0.001, log_steps=1000):
     optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
-    for eopch in range(epochs):
+    for epoch in range(epochs):
         losses = []
         total_loss = 0
         start = time.time()
