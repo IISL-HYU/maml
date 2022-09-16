@@ -73,7 +73,7 @@ def maml_train(model, train_ds, epochs=1, lr_inner=0.01, batch_size=1, log_steps
         total_loss = 0
         losses = []
         start = time.time()
-        # 打乱生成的训练集
+
         for i, ds in enumerate(random.sample(train_ds, len(train_ds))):
             x, y = np_to_tensor(ds.batch())
             model.forward(x)
