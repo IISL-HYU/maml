@@ -66,7 +66,7 @@ def regular_train(model, train_ds, epochs=1, lr=0.001, log_steps=1000):
         plt.plot(losses)
         plt.title('ANN loss per epoch')
         plt.show()
-    return model
+    return model, losses 
 
 def maml_train(model, train_ds, epochs=1, lr_inner=0.01, batch_size=1, log_steps=1000):
     optimizer = tf.keras.optimizers.Adam()
@@ -100,12 +100,12 @@ def maml_train(model, train_ds, epochs=1, lr_inner=0.01, batch_size=1, log_steps
             losses.append(loss)
             
             if i % log_steps == 0 and i > 0:
-                print('Step {}: loss = {}, Time to run {} steps = {}'.format(i, loss, log_steps, time.time() - start))
+                print('Step {}: loss = {}, Time to run {} steps = {:.2f}'.format(i, loss, log_steps, time.time() - start))
                 start = time.time()
         plt.plot(losses)
         plt.title('MAML losses per epoch')
         plt.show()
-    return model
+    return model, losses 
 
 def plot_model_comparison_to_average(model, ds, model_name='ANN', K=5):
     '''Compare model to average.
