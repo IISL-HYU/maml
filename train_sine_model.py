@@ -41,8 +41,9 @@ def apply_gradients(optimizer, gradients, variables):
 
 def train_step(x, y, model, optimizer):
     tensor_x, tensor_y = np_to_tensor((x, y))
-    gradients, loss = compute_gradients(model, tensor_x, tensor_y)
-    apply_gradients(optimizer, gradients, model.trainable_variables)
+    with tf.device("cpu:0"):
+        gradients, loss = compute_gradients(model, tensor_x, tensor_y)
+        apply_gradients(optimizer, gradients, model.trainable_variables)
     return loss
 
 def regular_train(model, train_ds, epochs=1, lr=0.001, log_steps=1000):
@@ -267,19 +268,21 @@ def compare_maml_and_neural_net(maml, neural_net, sinusoid_generator, num_steps=
 if __name__ == '__main__':
     model = SineModel()
     train_ds, test_ds = generate_dataset(K=5)
-    name = 'neural network K=5 lr=0.001'
-    neural_model = regular_train(model, train_ds)
-    plot_model_comparison_to_average(neural_model, train_ds, model_name='comparison')
-    for index in np.random.randint(0, len(test_ds), size=3):
-        eval_sinewave_for_test(neural_model, test_ds[index],name=name)
+    with tf.device("cpu:0"):
+        name = 'neural network K=5 lr=0.001'
+        neural_model = regular_train(model, train_ds)
+        plot_model_comparison_to_average(neural_model, train_ds, model_name='comparison')
+        for index in np.random.randint(0, len(test_ds), size=3):
+            eval_sinewave_for_test(neural_model, test_ds[index],name=name)
 
 
-    # model = SineModel()
-    name = 'MAML K=5, Alpha=0.01 Beta=0.001'
-    maml_model = maml_train(model, train_ds)
-    plot_model_comparison_to_average(maml_model, train_ds, model_name='MAML')
-    for index in np.random.randint(0, len(test_ds), size=3):
-        eval_sinewave_for_test(maml_model, test_ds[index],name=name)
+        # model = SineModel()
+    
+        name = 'MAML K=5, Alpha=0.01 Beta=0.001'
+        maml_model = maml_train(model, train_ds)
+        plot_model_comparison_to_average(maml_model, train_ds, model_name='MAML')
+        for index in np.random.randint(0, len(test_ds), size=3):
+            eval_sinewave_for_test(maml_model, test_ds[index],name=name)
 
     # for _ in range(3):
     #     index = np.random.choice(range(len(test_ds)))
